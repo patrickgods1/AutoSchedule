@@ -58,7 +58,7 @@ pyinstaller AutoSchedule.spec .\AutoSchedule.py
 You may need to modify the file paths if not in same current working directory.
 
 ## Screenshot
-![autoschedule](https://user-images.githubusercontent.com/41496510/50427756-9caf5980-0864-11e9-9337-17838e05c914.png)
+![AutoSchedulev0 3](https://user-images.githubusercontent.com/60832092/144553485-03bad41b-cb1f-4912-b1d1-3ec0be4a7af6.png)
 
 ## Authors
 * **Patrick Yu** - *Initial work* - [patrickgods1](https://github.com/patrickgods1) - UC Berkeley Extension
