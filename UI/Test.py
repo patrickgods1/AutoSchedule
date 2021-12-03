@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file 'Test.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.2
+# Created by: PyQt5 UI code generator 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_mainWindow(object):
     def setupUi(self, mainWindow):
@@ -176,37 +178,32 @@ class Ui_mainWindow(object):
         self.genReportLayout.addLayout(self.saveReportPathLayout)
         self.locationLayout = QtWidgets.QHBoxLayout()
         self.locationLayout.setObjectName("locationLayout")
-        self.ABSWcheckBox = QtWidgets.QCheckBox(self.genReportBox)
-        font = QtGui.QFont()
-        font.setUnderline(False)
-        self.ABSWcheckBox.setFont(font)
-        self.ABSWcheckBox.setObjectName("ABSWcheckBox")
-        self.locationLayout.addWidget(self.ABSWcheckBox)
-        self.BelmontcheckBox = QtWidgets.QCheckBox(self.genReportBox)
-        font = QtGui.QFont()
-        font.setUnderline(False)
-        self.BelmontcheckBox.setFont(font)
-        self.BelmontcheckBox.setObjectName("BelmontcheckBox")
-        self.locationLayout.addWidget(self.BelmontcheckBox)
+        self.label = QtWidgets.QLabel(self.genReportBox)
+        self.label.setObjectName("label")
+        self.locationLayout.addWidget(self.label)
         self.GBCcheckBox = QtWidgets.QCheckBox(self.genReportBox)
         font = QtGui.QFont()
         font.setUnderline(False)
         self.GBCcheckBox.setFont(font)
         self.GBCcheckBox.setObjectName("GBCcheckBox")
         self.locationLayout.addWidget(self.GBCcheckBox)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
+        self.locationLayout.addItem(spacerItem)
         self.SFCcheckBox = QtWidgets.QCheckBox(self.genReportBox)
         font = QtGui.QFont()
         font.setUnderline(False)
         self.SFCcheckBox.setFont(font)
         self.SFCcheckBox.setObjectName("SFCcheckBox")
         self.locationLayout.addWidget(self.SFCcheckBox)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.locationLayout.addItem(spacerItem1)
         self.genReportLayout.addLayout(self.locationLayout)
         self.mainWindowLayout.addWidget(self.genReportBox)
         self.startExitLayout = QtWidgets.QHBoxLayout()
         self.startExitLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.startExitLayout.setObjectName("startExitLayout")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.startExitLayout.addItem(spacerItem)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.startExitLayout.addItem(spacerItem2)
         self.StartButton = QtWidgets.QPushButton(mainWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -223,8 +220,8 @@ class Ui_mainWindow(object):
         self.StartButton.setFont(font)
         self.StartButton.setObjectName("StartButton")
         self.startExitLayout.addWidget(self.StartButton)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum)
-        self.startExitLayout.addItem(spacerItem1)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum)
+        self.startExitLayout.addItem(spacerItem3)
         self.exitButton = QtWidgets.QPushButton(mainWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -241,8 +238,8 @@ class Ui_mainWindow(object):
         self.exitButton.setFont(font)
         self.exitButton.setObjectName("exitButton")
         self.startExitLayout.addWidget(self.exitButton)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.startExitLayout.addItem(spacerItem2)
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.startExitLayout.addItem(spacerItem4)
         self.mainWindowLayout.addLayout(self.startExitLayout)
 
         self.retranslateUi(mainWindow)
@@ -257,8 +254,7 @@ class Ui_mainWindow(object):
         self.saveReportPathLabel.setText(_translate("mainWindow", "Save Path:"))
         self.selectSaveReportPath.setText(_translate("mainWindow", "C:\\"))
         self.browseSaveReportButton.setText(_translate("mainWindow", "Browse"))
-        self.ABSWcheckBox.setText(_translate("mainWindow", "ABSW"))
-        self.BelmontcheckBox.setText(_translate("mainWindow", "Belmont"))
+        self.label.setText(_translate("mainWindow", "Location: "))
         self.GBCcheckBox.setText(_translate("mainWindow", "GBC"))
         self.SFCcheckBox.setText(_translate("mainWindow", "SFC"))
         self.StartButton.setText(_translate("mainWindow", "Start"))
@@ -273,4 +269,3 @@ if __name__ == "__main__":
     ui.setupUi(mainWindow)
     mainWindow.show()
     sys.exit(app.exec_())
-

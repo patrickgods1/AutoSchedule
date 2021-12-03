@@ -2,8 +2,6 @@
 AutoSchedule is an application designed to automate the following:
 
 * Downloading the Section Schedule Daily Summary from Destiny and creating a sorted/formatted report for:
-	* ABSW
-	* Belmont Center
 	* Golden Bear Center
 	* San Francisco Center
 
@@ -63,4 +61,4 @@ You may need to modify the file paths if not in same current working directory.
 ![autoschedule](https://user-images.githubusercontent.com/41496510/50427756-9caf5980-0864-11e9-9337-17838e05c914.png)
 
 ## Authors
-* **Patrick Yu** - *Initial work* - [patrickgod1](https://github.com/patrickgod1) - UC Berkeley Extension
+* **Patrick Yu** - *Initial work* - [patrickgods1](https://github.com/patrickgods1) - UC Berkeley Extension

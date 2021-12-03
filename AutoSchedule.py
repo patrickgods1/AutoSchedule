@@ -1,6 +1,6 @@
 #! python3
 import os, sys, time, inspect, datetime
-#import PyQt5
+import PyQt5
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog, QApplication, QWidget, QPushButton, QMessageBox
 from selenium import webdriver
@@ -16,10 +16,10 @@ import pandas as pd
 # from pptx.dml.color import RGBColor
 
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+    PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
 if hasattr(QtCore.Qt, 'AA+_UseHighDpiPixmaps'):
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)   
+    PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)   
 
 # Global variables and flags
 current_folder = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile(inspect.currentframe() ))[0]))
@@ -29,7 +29,7 @@ current_folder = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile(
 genReport = False
 startDate = str(QtCore.QDate.currentDate().toPyDate())
 endDate = str(QtCore.QDate.currentDate().toPyDate())
-location = 'ABSW'
+location = 'Golden Bear Center'
 # createSigns = False
 useExistingReport = False
 saveReportToPath = ''
@@ -37,19 +37,21 @@ saveReportToPath = ''
 # classroomSignsOutput = False
 # dailyScheduleOutput = False
 # powerpointOutput = False
-ABSWScheduleOutput = False
-BelmontScheduleOutput = False
+# ABSWScheduleOutput = False
+# BelmontScheduleOutput = False
 GBCScheduleOutput = False
 SFCScheduleOutput = False
 # saveSignsDirectory = ''
-center = {'ABSW': {'campus': 'Berkeley - CA0001', 'building': 'UC Berkeley Extension American Baptist Seminary of the West, 2515 Hillegass Ave. - '},
-          'Belmont': {'campus': 'Belmont - CA0004', 'building': 'UC Berkeley Extension Belmont Center, 1301 Shoreway Rd., Ste. 400 - BEL'},
+center = {
+        # 'ABSW': {'campus': 'Berkeley - CA0001', 'building': 'UC Berkeley Extension American Baptist Seminary of the West, 2515 Hillegass Ave. - '},
+        #   'Belmont': {'campus': 'Belmont - CA0004', 'building': 'UC Berkeley Extension Belmont Center, 1301 Shoreway Rd., Ste. 400 - BEL'},
           'Golden Bear Center': {'campus': 'Berkeley - CA0001', 'building': 'UC Berkeley Extension Golden Bear Center, 1995 University Ave. - GBC'},
           'San Francisco Center': {'campus': 'San Francisco - CA0003', 'building': 'San Francisco Campus, 160 Spear St. - SFCAMPUS'}
             }
 
-centerReverse = {'ABSW - UC Berkeley Extension American Baptist Seminary of the West, 2515 Hillegass Ave.': {'name':'ABSW'},
-                 'BEL - UC Berkeley Extension Belmont Center, 1301 Shoreway Rd., Ste. 400': {'name':'BLM'},
+centerReverse = {
+                # 'ABSW - UC Berkeley Extension American Baptist Seminary of the West, 2515 Hillegass Ave.': {'name':'ABSW'},
+                #  'BEL - UC Berkeley Extension Belmont Center, 1301 Shoreway Rd., Ste. 400': {'name':'BLM'},
                  'GBC - UC Berkeley Extension Golden Bear Center, 1995 University Ave.': {'name': 'GBC'},
                  'SFCAMPUS - San Francisco Campus, 160 Spear St.': {'name': 'SFC'}}
 
@@ -224,37 +226,32 @@ class Ui_mainWindow(object):
         self.genReportLayout.addLayout(self.saveReportPathLayout)
         self.locationLayout = QtWidgets.QHBoxLayout()
         self.locationLayout.setObjectName("locationLayout")
-        self.ABSWcheckBox = QtWidgets.QCheckBox(self.genReportBox)
-        font = QtGui.QFont()
-        font.setUnderline(False)
-        self.ABSWcheckBox.setFont(font)
-        self.ABSWcheckBox.setObjectName("ABSWcheckBox")
-        self.locationLayout.addWidget(self.ABSWcheckBox)
-        self.BelmontcheckBox = QtWidgets.QCheckBox(self.genReportBox)
-        font = QtGui.QFont()
-        font.setUnderline(False)
-        self.BelmontcheckBox.setFont(font)
-        self.BelmontcheckBox.setObjectName("BelmontcheckBox")
-        self.locationLayout.addWidget(self.BelmontcheckBox)
+        self.label = QtWidgets.QLabel(self.genReportBox)
+        self.label.setObjectName("label")
+        self.locationLayout.addWidget(self.label)
         self.GBCcheckBox = QtWidgets.QCheckBox(self.genReportBox)
         font = QtGui.QFont()
         font.setUnderline(False)
         self.GBCcheckBox.setFont(font)
         self.GBCcheckBox.setObjectName("GBCcheckBox")
         self.locationLayout.addWidget(self.GBCcheckBox)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
+        self.locationLayout.addItem(spacerItem)
         self.SFCcheckBox = QtWidgets.QCheckBox(self.genReportBox)
         font = QtGui.QFont()
         font.setUnderline(False)
         self.SFCcheckBox.setFont(font)
         self.SFCcheckBox.setObjectName("SFCcheckBox")
         self.locationLayout.addWidget(self.SFCcheckBox)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.locationLayout.addItem(spacerItem1)
         self.genReportLayout.addLayout(self.locationLayout)
         self.mainWindowLayout.addWidget(self.genReportBox)
         self.startExitLayout = QtWidgets.QHBoxLayout()
         self.startExitLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.startExitLayout.setObjectName("startExitLayout")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.startExitLayout.addItem(spacerItem)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.startExitLayout.addItem(spacerItem2)
         self.StartButton = QtWidgets.QPushButton(mainWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -271,8 +268,8 @@ class Ui_mainWindow(object):
         self.StartButton.setFont(font)
         self.StartButton.setObjectName("StartButton")
         self.startExitLayout.addWidget(self.StartButton)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum)
-        self.startExitLayout.addItem(spacerItem1)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum)
+        self.startExitLayout.addItem(spacerItem3)
         self.exitButton = QtWidgets.QPushButton(mainWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -289,8 +286,8 @@ class Ui_mainWindow(object):
         self.exitButton.setFont(font)
         self.exitButton.setObjectName("exitButton")
         self.startExitLayout.addWidget(self.exitButton)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.startExitLayout.addItem(spacerItem2)
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.startExitLayout.addItem(spacerItem4)
         self.mainWindowLayout.addLayout(self.startExitLayout)
 
         self.retranslateUi(mainWindow)
@@ -303,10 +300,9 @@ class Ui_mainWindow(object):
         self.startDateLabel.setText(_translate("mainWindow", "Start Date:"))
         self.endDateLabel.setText(_translate("mainWindow", "End Date:"))
         self.saveReportPathLabel.setText(_translate("mainWindow", "Save Path:"))
-        self.selectSaveReportPath.setText(_translate("mainWindow", ""))
+        self.selectSaveReportPath.setText(_translate("mainWindow", "C:\\"))
         self.browseSaveReportButton.setText(_translate("mainWindow", "Browse"))
-        self.ABSWcheckBox.setText(_translate("mainWindow", "ABSW"))
-        self.BelmontcheckBox.setText(_translate("mainWindow", "Belmont"))
+        self.label.setText(_translate("mainWindow", "Location: "))
         self.GBCcheckBox.setText(_translate("mainWindow", "GBC"))
         self.SFCcheckBox.setText(_translate("mainWindow", "SFC"))
         self.StartButton.setText(_translate("mainWindow", "Start"))
@@ -321,8 +317,8 @@ class Ui_mainWindow(object):
         # self.createSignsBox.toggled.connect(self.createSignsState)
         # self.useExistingReportBox.toggled.connect(self.useExistingReportState)
         # self.browseExistingReportButton.clicked.connect(self.existingReportPath)
-        self.ABSWcheckBox.toggled.connect(self.ABSWcheckBoxState)
-        self.BelmontcheckBox.toggled.connect(self.BelmontcheckBoxState)
+        # self.ABSWcheckBox.toggled.connect(self.ABSWcheckBoxState)
+        # self.BelmontcheckBox.toggled.connect(self.BelmontcheckBoxState)
         self.GBCcheckBox.toggled.connect(self.GBCcheckBoxState)
         self.SFCcheckBox.toggled.connect(self.SFCcheckBoxState)
         # self.browseSaveSignsButton.clicked.connect(self.saveSignsPath)
@@ -343,7 +339,10 @@ class Ui_mainWindow(object):
 
     def startDateChanged(self):
         global startDate
+        global endDate
         startDate = str(self.selectStartDate.date().toPyDate())
+        endDate = startDate
+        self.selectEndDate.setDate(self.selectStartDate.date())
 
     def endDateChanged(self):
         global endDate
@@ -355,22 +354,22 @@ class Ui_mainWindow(object):
 
     def saveReportDirectory(self):
         global saveReportToPath
-        saveReportToPath = QFileDialog.getExistingDirectory(None, 'Save Destiny Report to')
+        saveReportToPath = os.path.normpath(QFileDialog.getExistingDirectory(None, 'Save Destiny Report to'))
         self.selectSaveReportPath.setText(saveReportToPath)
 
-    def ABSWcheckBoxState(self):
-        global ABSWScheduleOutput
-        if self.ABSWcheckBox.isChecked():
-            ABSWScheduleOutput = True
-        else:   
-            ABSWScheduleOutput = False
+    # def ABSWcheckBoxState(self):
+    #     global ABSWScheduleOutput
+    #     if self.ABSWcheckBox.isChecked():
+    #         ABSWScheduleOutput = True
+    #     else:   
+    #         ABSWScheduleOutput = False
 
-    def BelmontcheckBoxState(self):
-        global BelmontScheduleOutput
-        if self.BelmontcheckBox.isChecked():
-            BelmontScheduleOutput = True
-        else:   
-            BelmontScheduleOutput = False
+    # def BelmontcheckBoxState(self):
+    #     global BelmontScheduleOutput
+    #     if self.BelmontcheckBox.isChecked():
+    #         BelmontScheduleOutput = True
+    #     else:   
+    #         BelmontScheduleOutput = False
 
     def GBCcheckBoxState(self):
         global GBCScheduleOutput
@@ -402,9 +401,9 @@ class Ui_mainWindow(object):
         elif saveReportToPath == '':
             QMessageBox.warning(None, 'Save location error', "Please select where you want to save the report to.")
             return
-        elif not (ABSWScheduleOutput or BelmontScheduleOutput or GBCScheduleOutput or SFCScheduleOutput):
-            QMessageBox.warning(None, 'Output Error', "Please a location.")
-            return
+        # elif not (ABSWScheduleOutput or BelmontScheduleOutput or GBCScheduleOutput or SFCScheduleOutput):
+        #     QMessageBox.warning(None, 'Output Error', "Please a location.")
+        #     return
         else:
             if os.path.isdir(saveReportToPath):
                 result = genReportFunction()
@@ -428,28 +427,28 @@ def genReportFunction():
         })
 
     locationList = []
-    if ABSWScheduleOutput:
-        locationList.append('ABSW')
-    if BelmontScheduleOutput:
-        locationList.append('Belmont')
+    # if ABSWScheduleOutput:
+    #     locationList.append('ABSW')
+    # if BelmontScheduleOutput:
+    #     locationList.append('Belmont')
     if GBCScheduleOutput:
         locationList.append('Golden Bear Center')
     if SFCScheduleOutput:
         locationList.append('San Francisco Center')
         
     # Delete old report if it exists
-    if os.path.exists(f"{saveReportToPath}/SectionScheduleDailySummary.xls"):
-        os.remove(f"{saveReportToPath}/SectionScheduleDailySummary.xls")
-    if os.path.exists(f"{saveReportToPath}/SectionScheduleDailySummary (1).xls"):
-        os.remove(f"{saveReportToPath}/SectionScheduleDailySummary (1).xls") 
-    if os.path.exists(f"{saveReportToPath}/SectionScheduleDailySummary (2).xls"):
-        os.remove(f"{saveReportToPath}/SectionScheduleDailySummary (2).xls")
-    if os.path.exists(f"{saveReportToPath}/SectionScheduleDailySummary (3).xls"):
-        os.remove(f"{saveReportToPath}/SectionScheduleDailySummary (3).xls")   
+    if os.path.exists(f"{saveReportToPath}\\SectionScheduleDailySummary.xls"):
+        os.remove(f"{saveReportToPath}\\SectionScheduleDailySummary.xls")
+    if os.path.exists(f"{saveReportToPath}\\SectionScheduleDailySummary (1).xls"):
+        os.remove(f"{saveReportToPath}\\SectionScheduleDailySummary (1).xls") 
+    if os.path.exists(f"{saveReportToPath}\\SectionScheduleDailySummary (2).xls"):
+        os.remove(f"{saveReportToPath}\\SectionScheduleDailySummary (2).xls")
+    if os.path.exists(f"{saveReportToPath}\\SectionScheduleDailySummary (3).xls"):
+        os.remove(f"{saveReportToPath}\\SectionScheduleDailySummary (3).xls")   
 
     reportPath = []    
     chromedriver = os.path.join(current_folder,"chromedriver.exe")
-    browser = webdriver.Chrome(executable_path = chromedriver, chrome_options=chrome_options)
+    browser = webdriver.Chrome(executable_path = chromedriver, options=chrome_options)
     browser.get('https://berkeleysv.destinysolutions.com')
     WebDriverWait(browser,3600).until(EC.presence_of_element_located((By.ID,"main-area-body")))
     for i in range(len(locationList)):
@@ -468,21 +467,21 @@ def genReportFunction():
         generateReportElm = browser.find_element_by_id('processReport')
         generateReportElm.click()
         if i == 0:
-            while not os.path.exists(f"{saveReportToPath}/SectionScheduleDailySummary.xls"):
+            while not os.path.exists(f"{saveReportToPath}\\SectionScheduleDailySummary.xls"):
                 time.sleep(1)
-            reportPath.append(f"{saveReportToPath}/SectionScheduleDailySummary.xls")
+            reportPath.append(f"{saveReportToPath}\\SectionScheduleDailySummary.xls")
         elif i == 1:
-            while not os.path.exists(f"{saveReportToPath}/SectionScheduleDailySummary (1).xls"):
+            while not os.path.exists(f"{saveReportToPath}\\SectionScheduleDailySummary (1).xls"):
                 time.sleep(1)
-            reportPath.append(f"{saveReportToPath}/SectionScheduleDailySummary (1).xls")
+            reportPath.append(f"{saveReportToPath}\\SectionScheduleDailySummary (1).xls")
         elif i == 2:
-            while not os.path.exists(f"{saveReportToPath}/SectionScheduleDailySummary (2).xls"):
+            while not os.path.exists(f"{saveReportToPath}\\SectionScheduleDailySummary (2).xls"):
                 time.sleep(1)
-            reportPath.append(f"{saveReportToPath}/SectionScheduleDailySummary (2).xls")
+            reportPath.append(f"{saveReportToPath}\\SectionScheduleDailySummary (2).xls")
         else:
-            while not os.path.exists(f"{saveReportToPath}/SectionScheduleDailySummary (3).xls"):
+            while not os.path.exists(f"{saveReportToPath}\\SectionScheduleDailySummary (3).xls"):
                 time.sleep(1)
-            reportPath.append(f"{saveReportToPath}/SectionScheduleDailySummary (3).xls")           
+            reportPath.append(f"{saveReportToPath}\\SectionScheduleDailySummary (3).xls")           
     browser.quit()
 
     for rp in reportPath:
@@ -504,14 +503,15 @@ def createSchedule(reportPath):
     # 17    R   Technology
     # 18    S   Section Size
     # 20    U   Notes
-    # 22    W   Final Approval
+    # 22    W   Approval Status
     
     # Read into Pandas dataframe for relevant columns
-    schedule = pd.read_excel(reportPath, header=6, skipfooter=1, usecols=[1,15,18,4,6,11,12,9,17,20,13], parse_dates=['Start Time', 'End Time'])
+    schedule = pd.read_excel(reportPath, header=6, skipfooter=1, usecols=[1,15,18,4,6,11,12,9,17,20,13,22], parse_dates=['Start Time', 'End Time'])
+    schedule = schedule[schedule['Approval Status'] == 'Final Approval'].copy()
     #print(schedule.head())
     # Determine if the Destiny report does not have any classes
     if schedule.empty:
-        print(f"No classes in {reportPath[idx]}")
+        print(f"No classes found in {reportPath}")
     # If report is not empty, determine which location report is for and which template to use
     else:
         location = centerReverse[schedule.iloc[0][6]]['name']
@@ -526,9 +526,9 @@ def GBCSchedule(schedule, location):
     sortedSchedule['Start Time'] = sortedSchedule['Start Time'].dt.strftime('%I:%M %p')
     sortedSchedule['End Time'] = sortedSchedule['End Time'].dt.strftime('%I:%M %p')
     sortedSchedule = sortedSchedule.fillna('')
-    dateList = sortedSchedule['Date'].astype(datetime.datetime).unique()
+    dateList = pd.to_datetime(sortedSchedule['Date'].unique())
 
-    writer = pd.ExcelWriter(f"{saveReportToPath}/{location} Schedule {dateList[0].strftime('%Y-%m-%d')} {dateList[0].strftime('%A')}.xlsx", engine='xlsxwriter')
+    writer = pd.ExcelWriter(f"{saveReportToPath}\\{location} Schedule {dateList[0].strftime('%Y-%m-%d')} {dateList[0].strftime('%A')}.xlsx", engine='xlsxwriter')
     workbook = writer.book
 
     worksheet = workbook.add_worksheet(location)
@@ -793,9 +793,9 @@ def SFCSchedule(schedule, location):
     sortedSchedule['Start Time'] = sortedSchedule['Start Time'].dt.strftime('%I:%M %p')
     sortedSchedule['End Time'] = sortedSchedule['End Time'].dt.strftime('%I:%M %p')
     sortedSchedule = sortedSchedule.fillna('')
-    dateList = sortedSchedule['Date'].astype(datetime.datetime).unique()
+    dateList = pd.to_datetime(sortedSchedule['Date'].unique())
 
-    writer = pd.ExcelWriter(f"{saveReportToPath}/{location} Schedule {dateList[0].strftime('%Y-%m-%d')} {dateList[0].strftime('%A')}.xlsx", engine='xlsxwriter')
+    writer = pd.ExcelWriter(f"{saveReportToPath}\\{location} Schedule {dateList[0].strftime('%Y-%m-%d')} {dateList[0].strftime('%A')}.xlsx", engine='xlsxwriter')
     workbook = writer.book
 
     worksheet = workbook.add_worksheet(location)

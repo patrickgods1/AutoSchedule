@@ -1,3 +1,5 @@
+# Ignore byte-compiled directories
 __pycache__/
 build/
 dist/
+Output/
