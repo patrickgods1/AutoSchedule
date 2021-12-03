@@ -8,6 +8,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
 # import docx
 # from docx.enum.section import WD_ORIENT
@@ -447,8 +448,8 @@ def genReportFunction():
         os.remove(f"{saveReportToPath}\\SectionScheduleDailySummary (3).xls")   
 
     reportPath = []    
-    chromedriver = os.path.join(current_folder,"chromedriver.exe")
-    browser = webdriver.Chrome(executable_path = chromedriver, options=chrome_options)
+    # chromedriver = os.path.join(current_folder,"chromedriver.exe")
+    browser = webdriver.Chrome(executable_path = ChromeDriverManager().install(), options=chrome_options)
     browser.get('https://berkeleysv.destinysolutions.com')
     WebDriverWait(browser,3600).until(EC.presence_of_element_located((By.ID,"main-area-body")))
     for i in range(len(locationList)):
