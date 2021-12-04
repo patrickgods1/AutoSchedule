@@ -31,7 +31,7 @@ These instructions will get you a copy of the project up and running on your loc
 * [Pandas](https://pandas.pydata.org/) - Data structure/anaylsis tool used.
 * [Selenium](https://selenium-python.readthedocs.io/) - Web crawling automation framework.
 * [Chrome Webdriver](http://chromedriver.chromium.org/downloads) - Webdriver for Chrome browser. Use to control automation with Selenium.
-* [Webdriver-Manager](https://github.com/SergeyPirogov/webdriver_manager) - Manager for webdriver version.
+* [Webdriver-Manager](https://github.com/SergeyPirogov/webdriver_manager) - Framework to manage webdriver version compatible with version of browser.
 * [xlsxwriter](https://xlsxwriter.readthedocs.io/) - Used to create Microsoft Excel documents (Daily Schedule)
 * [PyQt5](https://pypi.org/project/PyQt5/) - Framework used to create GUI.
 * [QtDesigner](http://doc.qt.io/qt-5/qtdesigner-manual.html) - GUI builder tool.
