@@ -29,15 +29,9 @@ current_folder = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile(
 # GBCPptTemplate = os.path.join(current_folder, "Template-GBC.pptx")
 genReport = False
 startDate = str(QtCore.QDate.currentDate().toPyDate())
-endDate = str(QtCore.QDate.currentDate().toPyDate())
-location = 'Golden Bear Center'
-# createSigns = False
-useExistingReport = False
+endDate = str(QtCore.QDate.currentDate().addMonths(12).toPyDate())
+# location = 'Golden Bear Center'
 saveReportToPath = ''
-# existingReportPath, _ = ('','')
-# classroomSignsOutput = False
-# dailyScheduleOutput = False
-# powerpointOutput = False
 # ABSWScheduleOutput = False
 # BelmontScheduleOutput = False
 GBCScheduleOutput = False
@@ -58,6 +52,21 @@ centerReverse = {
 
 # Main Window for GUI
 class Ui_mainWindow(object):
+    def __init__(self):
+        super().__init__()
+
+        # Initialize settings if setting exists in config.ini file, otherwise set default
+        self.settings = QtCore.QSettings("config.ini", QtCore.QSettings.IniFormat)
+        global saveReportToPath, GBCScheduleOutput, SFCScheduleOutput, \
+            uploadGBCSchedule, GBCScheduleURL, uploadSFCSchedule, SFCScheduleURL
+        saveReportToPath = self.settings.value('saveReportToPath', os.path.dirname(os.path.abspath(__file__)), type=str)
+        GBCScheduleOutput = self.settings.value('GBCScheduleOutput', False, type=bool)
+        SFCScheduleOutput = self.settings.value('SFCScheduleOutput', False, type=bool)
+        uploadGBCSchedule = self.settings.value('uploadGBCSchedule', True, type=bool)
+        uploadSFCSchedule = self.settings.value('uploadSFCSchedule', True, type=bool)
+        GBCScheduleURL = self.settings.value('GBCScheduleURL', '', type=str)
+        SFCScheduleURL = self.settings.value('SFCScheduleURL', '', type=str)
+
     def setupUi(self, mainWindow):
         mainWindow.setObjectName("mainWindow")
         mainWindow.setWindowModality(QtCore.Qt.NonModal)
@@ -165,8 +174,8 @@ class Ui_mainWindow(object):
         self.selectEndDate.setFocusPolicy(QtCore.Qt.WheelFocus)
         self.selectEndDate.setReadOnly(False)
         self.selectEndDate.setCalendarPopup(True)
-        self.selectEndDate.setDate(QtCore.QDate.currentDate())
-        endDate = str(QtCore.QDate.currentDate().toPyDate())
+        self.selectEndDate.setDate(QtCore.QDate.currentDate().addMonths(12))
+        endDate = str(QtCore.QDate.currentDate().addMonths(12).toPyDate())
         self.selectEndDate.setObjectName("selectEndDate")
         self.dateLayout.addWidget(self.selectEndDate)
         self.genReportLayout.addLayout(self.dateLayout)
@@ -234,6 +243,7 @@ class Ui_mainWindow(object):
         font = QtGui.QFont()
         font.setUnderline(False)
         self.GBCcheckBox.setFont(font)
+        self.GBCcheckBox.setChecked(GBCScheduleOutput)
         self.GBCcheckBox.setObjectName("GBCcheckBox")
         self.locationLayout.addWidget(self.GBCcheckBox)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
@@ -242,6 +252,7 @@ class Ui_mainWindow(object):
         font = QtGui.QFont()
         font.setUnderline(False)
         self.SFCcheckBox.setFont(font)
+        self.SFCcheckBox.setChecked(SFCScheduleOutput)
         self.SFCcheckBox.setObjectName("SFCcheckBox")
         self.locationLayout.addWidget(self.SFCcheckBox)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -301,7 +312,7 @@ class Ui_mainWindow(object):
         self.startDateLabel.setText(_translate("mainWindow", "Start Date:"))
         self.endDateLabel.setText(_translate("mainWindow", "End Date:"))
         self.saveReportPathLabel.setText(_translate("mainWindow", "Save Path:"))
-        self.selectSaveReportPath.setText(_translate("mainWindow", "C:\\"))
+        self.selectSaveReportPath.setText(_translate("mainWindow", saveReportToPath))
         self.browseSaveReportButton.setText(_translate("mainWindow", "Browse"))
         self.label.setText(_translate("mainWindow", "Location: "))
         self.GBCcheckBox.setText(_translate("mainWindow", "GBC"))
@@ -309,15 +320,9 @@ class Ui_mainWindow(object):
         self.StartButton.setText(_translate("mainWindow", "Start"))
         self.exitButton.setText(_translate("mainWindow", "Exit"))
 
-
-        #self.genReportBox.toggled.connect(self.genReportState)
         self.selectStartDate.dateChanged.connect(self.startDateChanged)
         self.selectEndDate.dateChanged.connect(self.endDateChanged)
-        # self.selectLocation.currentIndexChanged.connect(self.locationChanged)
         self.browseSaveReportButton.clicked.connect(self.saveReportDirectory)
-        # self.createSignsBox.toggled.connect(self.createSignsState)
-        # self.useExistingReportBox.toggled.connect(self.useExistingReportState)
-        # self.browseExistingReportButton.clicked.connect(self.existingReportPath)
         # self.ABSWcheckBox.toggled.connect(self.ABSWcheckBoxState)
         # self.BelmontcheckBox.toggled.connect(self.BelmontcheckBoxState)
         self.GBCcheckBox.toggled.connect(self.GBCcheckBoxState)
@@ -326,37 +331,28 @@ class Ui_mainWindow(object):
         self.exitButton.clicked.connect(self.exitApp)
         self.StartButton.clicked.connect(self.startApp)
 
-    # def genReportState(self):
-    #     global genReport, useExistingReport
-    #     if self.genReportBox.isChecked():
-    #         genReport = True
-    #         useExistingReport = False
-    #         self.useExistingReportBox.setChecked(False)
-    #     else:   
-    #         genReport = False
-    #         useExistingReport = True
-    #         self.useExistingReportBox.setEnabled(True)
-    #         self.useExistingReportBox.setChecked(True)
 
     def startDateChanged(self):
         global startDate
         global endDate
         startDate = str(self.selectStartDate.date().toPyDate())
-        endDate = startDate
-        self.selectEndDate.setDate(self.selectStartDate.date())
+        endDate = self.selectStartDate.date().addMonths(12).toPyDate()
+        self.selectEndDate.setDate(self.selectStartDate.date().addMonths(12))
 
     def endDateChanged(self):
         global endDate
         endDate = str(self.selectEndDate.date().toPyDate())
 
-    def locationChanged(self, i):
-        global location
-        location = self.selectLocation.currentText()
+    # def locationChanged(self, i):
+    #     global location
+    #     location = self.selectLocation.currentText()
 
     def saveReportDirectory(self):
         global saveReportToPath
-        saveReportToPath = os.path.normpath(QFileDialog.getExistingDirectory(None, 'Save Destiny Report to'))
-        self.selectSaveReportPath.setText(saveReportToPath)
+        path = os.path.normpath(QFileDialog.getExistingDirectory(None, 'Save Destiny Report to', saveReportToPath))
+        if path and path != '.':
+            saveReportToPath = path
+            self.selectSaveReportPath.setText(saveReportToPath)
 
     # def ABSWcheckBoxState(self):
     #     global ABSWScheduleOutput
@@ -389,6 +385,14 @@ class Ui_mainWindow(object):
     def exitApp(self):        
         reply = QMessageBox.question(None, 'Exit', "Are you sure you want to exit?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)                                      
         if reply == QMessageBox.Yes:
+            # Save settings state to config.ini file
+            self.settings.setValue('saveReportToPath', saveReportToPath)
+            self.settings.setValue('GBCScheduleOutput', GBCScheduleOutput)
+            self.settings.setValue('SFCScheduleOutput', SFCScheduleOutput)
+            self.settings.setValue('uploadGBCSchedule', uploadGBCSchedule)
+            self.settings.setValue('GBCScheduleURL', GBCScheduleURL)
+            self.settings.setValue('uploadSFCSchedule', uploadSFCSchedule)
+            self.settings.setValue('SFCScheduleURL', SFCScheduleURL)
             sys.exit()
         else:
             pass
