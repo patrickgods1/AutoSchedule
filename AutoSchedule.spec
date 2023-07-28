@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['AutoSchedule.py'],
-             pathex=['C:\Python36\Lib\site-packages\scipy\extra-dll'],
+             pathex=[],
              binaries=[],
              datas=[],
              hiddenimports=[],
@@ -19,15 +19,15 @@ pyz = PYZ(a.pure, a.zipped_data,
 exe = EXE(pyz,
           a.scripts,
           exclude_binaries=True,
-          name='AutoSchedule v0.4',
-          debug=False,
+          name='AutoSchedule v0.5',
+          debug=True,
           strip=False,
           upx=True,
-          console=False )
+          console=True )
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
                a.datas,
                strip=False,
                upx=True,
-               name='AutoSchedule v0.4')
+               name='AutoSchedule v0.5')
