@@ -14,11 +14,12 @@ from pydrive2.drive import GoogleDrive
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from webdriver_manager.chrome import ChromeDriverManager
 
 if hasattr(QtCore.Qt, "AA_EnableHighDpiScaling"):
     PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
@@ -485,12 +486,17 @@ class Ui_mainWindow(object):
                 )
                 return
         if result == 0:
-            QMessageBox.warning(None, "Error!!!", "An unexpected error occured.")
+            QtWidgets.QMessageBox.warning(
+                None,
+                "Download error",
+                "Report could not be downloaded. Please try again.",
+            )
         else:
             QMessageBox.warning(None, "Done", "Done creating signs.")
 
     def genReportFunction(self, startDate: str, endDate: str) -> bool:
         # Set Chrome defaults to automate download
+        service = Service()
         chrome_options = Options()
         chrome_options.add_experimental_option(
             "prefs",
@@ -525,63 +531,66 @@ class Ui_mainWindow(object):
             os.remove(f"{self.saveReportToPath}\\SectionScheduleDailySummary (3).xls")
 
         reportPath = []
-        browser = webdriver.Chrome(
-            executable_path=ChromeDriverManager().install(), options=chrome_options
-        )
-        browser.get("https://berkeleysv.destinysolutions.com")
-        WebDriverWait(browser, 3600).until(
-            EC.presence_of_element_located((By.ID, "main-area-body"))
-        )
-        for i in range(len(locationList)):
-            # Download Destiny Report
-            browser.get(
-                "https://berkeleysv.destinysolutions.com/srs/reporting/sectionScheduleDailySummary.do?method=load"  # noqa: E501
+        try:
+            browser = webdriver.Chrome(service=service, options=chrome_options)
+            browser.get("https://berkeleysv.destinysolutions.com")
+            WebDriverWait(browser, 3600).until(
+                EC.presence_of_element_located((By.ID, "main-area-body"))
             )
-            startDateElm = browser.find_element_by_id("startDateRecordString")
-            startDateElm.send_keys(startDate)
-            endDateElm = browser.find_element_by_id("endDateRecordString")
-            endDateElm.send_keys(endDate)
-            campusElm = browser.find_element_by_name("scheduleBlock.campusId")
-            campusElm.send_keys(self.center[locationList[i]]["campus"])
-            buildingElm = browser.find_element_by_name("scheduleBlock.buildingId")
-            buildingElm.send_keys(self.center[locationList[i]]["building"])
-            outputTypeElm = browser.find_element_by_name("outputType")
-            outputTypeElm.send_keys("Output to XLS (Export)")
-            generateReportElm = browser.find_element_by_id("processReport")
-            generateReportElm.click()
-            if i == 0:
-                while not os.path.exists(
-                    f"{self.saveReportToPath}\\SectionScheduleDailySummary.xls"
-                ):
-                    time.sleep(1)
-                reportPath.append(
-                    f"{self.saveReportToPath}\\SectionScheduleDailySummary.xls"
+            for i in range(len(locationList)):
+                # Download Destiny Report
+                browser.get(
+                    "https://berkeleysv.destinysolutions.com/srs/reporting/sectionScheduleDailySummary.do?method=load"  # noqa: E501
                 )
-            elif i == 1:
-                while not os.path.exists(
-                    f"{self.saveReportToPath}\\SectionScheduleDailySummary (1).xls"
-                ):
-                    time.sleep(1)
-                reportPath.append(
-                    f"{self.saveReportToPath}\\SectionScheduleDailySummary (1).xls"
-                )
-            elif i == 2:
-                while not os.path.exists(
-                    f"{self.saveReportToPath}\\SectionScheduleDailySummary (2).xls"
-                ):
-                    time.sleep(1)
-                reportPath.append(
-                    f"{self.saveReportToPath}\\SectionScheduleDailySummary (2).xls"
-                )
-            else:
-                while not os.path.exists(
-                    f"{self.saveReportToPath}\\SectionScheduleDailySummary (3).xls"
-                ):
-                    time.sleep(1)
-                reportPath.append(
-                    f"{self.saveReportToPath}\\SectionScheduleDailySummary (3).xls"
-                )
-        browser.quit()
+
+                startDateElm = browser.find_element("id", "startDateRecordString")
+                startDateElm.send_keys(startDate)
+                endDateElm = browser.find_element("id", "endDateRecordString")
+                endDateElm.send_keys(endDate)
+                campusElm = browser.find_element("name", "scheduleBlock.campusId")
+                campusElm.send_keys(self.center[locationList[i]]["campus"])
+                buildingElm = browser.find_element("name", "scheduleBlock.buildingId")
+                buildingElm.send_keys(self.center[locationList[i]]["building"])
+                outputTypeElm = browser.find_element("name", "outputType")
+                outputTypeElm.send_keys("Output to XLS (Export)")
+                generateReportElm = browser.find_element("id", "processReport")
+                generateReportElm.click()
+                if i == 0:
+                    while not os.path.exists(
+                        f"{self.saveReportToPath}\\SectionScheduleDailySummary.xls"
+                    ):
+                        time.sleep(1)
+                    reportPath.append(
+                        f"{self.saveReportToPath}\\SectionScheduleDailySummary.xls"
+                    )
+                elif i == 1:
+                    while not os.path.exists(
+                        f"{self.saveReportToPath}\\SectionScheduleDailySummary (1).xls"
+                    ):
+                        time.sleep(1)
+                    reportPath.append(
+                        f"{self.saveReportToPath}\\SectionScheduleDailySummary (1).xls"
+                    )
+                elif i == 2:
+                    while not os.path.exists(
+                        f"{self.saveReportToPath}\\SectionScheduleDailySummary (2).xls"
+                    ):
+                        time.sleep(1)
+                    reportPath.append(
+                        f"{self.saveReportToPath}\\SectionScheduleDailySummary (2).xls"
+                    )
+                else:
+                    while not os.path.exists(
+                        f"{self.saveReportToPath}\\SectionScheduleDailySummary (3).xls"
+                    ):
+                        time.sleep(1)
+                    reportPath.append(
+                        f"{self.saveReportToPath}\\SectionScheduleDailySummary (3).xls"
+                    )
+            browser.quit()
+        except WebDriverException:
+            browser.quit()
+            return False
 
         for rp in reportPath:
             self.createSchedule(rp)
@@ -610,7 +619,13 @@ class Ui_mainWindow(object):
             header=6,
             skipfooter=1,
             usecols=[1, 15, 18, 4, 6, 11, 12, 9, 17, 20, 13, 22],
-            parse_dates=["Start Time", "End Time"],
+            # parse_dates=[1, 2, 3],
+            parse_dates=[1, "Start Time", "End Time"],
+            date_format={
+                "Date": "%Y/%m/%d %H:%M:%S",
+                "Start Time": "%I:%M%p",
+                "End Time": "%I:%M%p",
+            },
         )
         schedule = schedule[schedule["Approval Status"] == "Final Approval"].copy()
 
@@ -650,6 +665,8 @@ class Ui_mainWindow(object):
                     )
             else:
                 fileName, date = self.GBCSchedule(schedule, location)
+                print(f"uploadGBCSchedule: {self.uploadGBCSchedule}")
+                print(f"attachGBCSchedule: {self.attachGBCSchedule}")
                 if self.uploadGBCSchedule:
                     self.uploadToGoogleDrive(drive, fileName, self.GBCGDriveFolderId)
                 if self.attachGBCSchedule:
@@ -691,7 +708,7 @@ class Ui_mainWindow(object):
             time.sleep(timeout)
 
         if not file:
-            print(f"[Warning] Could not find {fileName} in Google Drive.")
+            print(f"[Warning] Could not find {fileName[:-5]} in Google Drive.")
             return None
 
         # Find whether an event already exists.
@@ -808,7 +825,7 @@ class Ui_mainWindow(object):
                 # A file with the same name already exists. Replace the existing file.
                 file = drive.CreateFile(
                     metadata={
-                        "title": fileName,
+                        "title": fileName[:-5],
                         "id": fileId,
                         "parents": [{"id": folderId}],
                     }
@@ -816,7 +833,7 @@ class Ui_mainWindow(object):
             else:
                 # A file with the same name does not already exists. Create a new file.
                 file = drive.CreateFile(
-                    metadata={"title": fileName, "parents": [{"id": folderId}]}
+                    metadata={"title": fileName[:-5], "parents": [{"id": folderId}]}
                 )
 
             # Set file to upload and convert to Google Doc type.
@@ -830,12 +847,8 @@ class Ui_mainWindow(object):
     def GBCSchedule(self, schedule: pd.DataFrame, location: str) -> Tuple[str, str]:
         # Sort the schedule.
         sortedSchedule = schedule.sort_values(by=["Date", "Start Time", "Room"])
-        sortedSchedule["Start Time"] = sortedSchedule["Start Time"].dt.strftime(
-            "%I:%M %p"
-        )
-        sortedSchedule["End Time"] = sortedSchedule["End Time"].dt.strftime("%I:%M %p")
         sortedSchedule = sortedSchedule.fillna("")
-        dateList = pd.to_datetime(sortedSchedule["Date"].unique())
+        dateList = sortedSchedule["Date"].dt.date.unique()
 
         # Create the Excel file to write to.
         fileName = (
@@ -1028,19 +1041,39 @@ class Ui_mainWindow(object):
         # Loop through each day
         for i in range(0, len(dateList)):
             singleDaySched = sortedSchedule.loc[
-                sortedSchedule["Date"] == dateList[i], :
+                sortedSchedule["Date"].dt.date == dateList[i], :
             ]
-            morningBlock = singleDaySched.loc[
-                singleDaySched["Start Time"].astype("datetime64") < "12:00:00", :
-            ]
-            afternoonBlock = singleDaySched.loc[
-                (singleDaySched["Start Time"].astype("datetime64") >= "12:00:00")
-                & (singleDaySched["Start Time"].astype("datetime64") < "17:00:00"),
-                :,
-            ]
-            eveningBlock = singleDaySched.loc[
-                singleDaySched["Start Time"].astype("datetime64") >= "17:00:00", :
-            ]
+
+            morningBlock = (
+                singleDaySched.set_index("Start Time")
+                .between_time("00:00", "12:00", inclusive="left")
+                .reset_index()
+            )
+            afternoonBlock = (
+                singleDaySched.set_index("Start Time")
+                .between_time("12:00", "17:00", inclusive="left")
+                .reset_index()
+            )
+            eveningBlock = (
+                singleDaySched.set_index("Start Time")
+                .between_time("17:00", "00:00", inclusive="left")
+                .reset_index()
+            )
+
+            morningBlock["Start Time"] = morningBlock["Start Time"].dt.strftime(
+                "%I:%M %p"
+            )
+            morningBlock["End Time"] = morningBlock["End Time"].dt.strftime("%I:%M %p")
+            afternoonBlock["Start Time"] = afternoonBlock["Start Time"].dt.strftime(
+                "%I:%M %p"
+            )
+            afternoonBlock["End Time"] = afternoonBlock["End Time"].dt.strftime(
+                "%I:%M %p"
+            )
+            eveningBlock["Start Time"] = eveningBlock["Start Time"].dt.strftime(
+                "%I:%M %p"
+            )
+            eveningBlock["End Time"] = eveningBlock["End Time"].dt.strftime("%I:%M %p")
 
             worksheet.write(
                 excelRow,
@@ -1270,12 +1303,8 @@ class Ui_mainWindow(object):
     def SFCSchedule(self, schedule: pd.DataFrame, location: str) -> Tuple[str, str]:
         # Sort the schedule.
         sortedSchedule = schedule.sort_values(by=["Date", "Room", "Start Time"])
-        sortedSchedule["Start Time"] = sortedSchedule["Start Time"].dt.strftime(
-            "%I:%M %p"
-        )
-        sortedSchedule["End Time"] = sortedSchedule["End Time"].dt.strftime("%I:%M %p")
         sortedSchedule = sortedSchedule.fillna("")
-        dateList = pd.to_datetime(sortedSchedule["Date"].unique())
+        dateList = sortedSchedule["Date"].dt.date.unique()
 
         # Create the Excel file to write to.
         fileName = (
@@ -1466,17 +1495,32 @@ class Ui_mainWindow(object):
         ):
             worksheet.write(1, col_num, value, headerFormat)
         excelRow = 2
+
         # Loop through each day
         for i in range(0, len(dateList)):
             singleDaySched = sortedSchedule.loc[
-                sortedSchedule["Date"] == dateList[i], :
+                sortedSchedule["Date"].dt.date == dateList[i], :
             ]
-            daytimeBlock = singleDaySched.loc[
-                singleDaySched["Start Time"].astype("datetime64") < "17:00:00", :
-            ]
-            eveningBlock = singleDaySched.loc[
-                singleDaySched["Start Time"].astype("datetime64") >= "17:00:00", :
-            ]
+
+            daytimeBlock = (
+                singleDaySched.set_index("Start Time")
+                .between_time("00:00", "17:00", inclusive="left")
+                .reset_index()
+            )
+            eveningBlock = (
+                singleDaySched.set_index("Start Time")
+                .between_time("17:00", "00:00", inclusive="left")
+                .reset_index()
+            )
+
+            daytimeBlock["Start Time"] = daytimeBlock["Start Time"].dt.strftime(
+                "%I:%M %p"
+            )
+            daytimeBlock["End Time"] = daytimeBlock["End Time"].dt.strftime("%I:%M %p")
+            eveningBlock["Start Time"] = eveningBlock["Start Time"].dt.strftime(
+                "%I:%M %p"
+            )
+            eveningBlock["End Time"] = eveningBlock["End Time"].dt.strftime("%I:%M %p")
 
             worksheet.write(
                 excelRow,
